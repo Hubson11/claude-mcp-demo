@@ -43,8 +43,10 @@ When asked to implement a component:
 
 Props interface is defined, placeholder returns a stub. Replace with full pixel-perfect implementation.
 
-Figma node: see `.claude/figma-node-id.txt` (set before demo)
-Confluence page: see `.claude/confluence-page-id.txt` (set before demo)
+The user will provide Figma and Confluence URLs directly in the prompt, for example:
+> "Zaimplementuj ProductCard. Figma: https://... Confluence: https://..."
+
+Use those URLs with the MCP tools to fetch design and spec.
 
 ## Project conventions
 - Components: PascalCase, one folder per component with `index.ts` barrel
