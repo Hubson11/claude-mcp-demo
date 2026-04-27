@@ -1,2 +1,0 @@
-SET_BEFORE_DEMO: Paste the Figma file URL or node ID here.
-Example: https://www.figma.com/file/XXXX/Nexus-Store?node-id=1:23

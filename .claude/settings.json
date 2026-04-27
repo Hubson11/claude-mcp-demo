@@ -1,23 +1,6 @@
 {
-  "mcpServers": {
-    "figma": {
-      "command": "npx",
-      "args": ["-y", "figma-developer-mcp", "--figma-api-key", "${FIGMA_API_KEY}"],
-      "env": {
-        "FIGMA_API_KEY": "${FIGMA_API_KEY}"
-      }
-    },
-    "confluence": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-server-confluence"],
-      "env": {
-        "CONFLUENCE_URL": "${CONFLUENCE_URL}",
-        "CONFLUENCE_USERNAME": "${CONFLUENCE_USERNAME}",
-        "CONFLUENCE_API_TOKEN": "${CONFLUENCE_API_TOKEN}"
-      }
-    }
-  },
-  "permissions": {
+  "enabledMcpjsonServers": ["figma"],
+"permissions": {
     "allow": [
       "Bash(git *)",
       "Bash(gh *)",

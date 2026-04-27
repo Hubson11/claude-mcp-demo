@@ -27,9 +27,15 @@ dist-ssr
 .env
 .env.local
 
+# Claude local settings (may contain secrets)
+.claude/settings.local.json
+
 # Cypress artifacts
 cypress/videos/
 cypress/screenshots/
 
 # Coverage
 coverage/
+
+*storybook.log
+storybook-static

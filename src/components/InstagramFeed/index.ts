@@ -1,1 +1,0 @@
-export { InstagramFeed } from './InstagramFeed'

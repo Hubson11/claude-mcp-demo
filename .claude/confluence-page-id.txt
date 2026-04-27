@@ -1,2 +1,0 @@
-SET_BEFORE_DEMO: Paste the Confluence page ID or URL here.
-Example: https://your-domain.atlassian.net/wiki/spaces/DEMO/pages/123456/ProductCard+Spec
