@@ -1,3 +1,8 @@
+---
+name: push
+description: Push the current branch to the remote repository, setting upstream if needed.
+---
+
 # /push
 
 Push the current branch to the remote repository.

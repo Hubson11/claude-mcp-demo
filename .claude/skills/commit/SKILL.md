@@ -1,3 +1,8 @@
+---
+name: commit
+description: Stage and commit all changes with a well-formatted conventional commit message (feat/fix/test/refactor/chore/docs prefix, imperative mood, max 72 chars).
+---
+
 # /commit
 
 Create a well-formatted git commit for all staged and unstaged changes.

@@ -1,3 +1,8 @@
+---
+name: flaky-finder
+description: Scan the last 20 GitHub Actions runs for flaky tests (failed in some runs, passed in others) and create a GitHub Issue documenting them.
+---
+
 # /flaky-finder
 
 Scan GitHub Actions run history to detect flaky tests, then create a GitHub Issue documenting them.

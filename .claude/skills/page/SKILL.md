@@ -1,3 +1,8 @@
+---
+name: page
+description: Build a full React page step by step — decomposes Figma into components, builds each one in parallel, runs E2E, i18n, accessibility audit, code review, and opens a PR.
+---
+
 # /page
 
 Builds a full React page composed of components — interactively, step by step — and drives it all the way to a merged PR.
@@ -75,7 +80,7 @@ Components marked `✅` are skipped in Step 3 unless the user explicitly asks to
 
 Extract the page ID from the URL (numeric segment) and fetch:
 ```
-mcp__atlassian__getConfluencePage(cloudId: "claude-mcp-demo.atlassian.net", pageId: "<id>", contentFormat: "markdown")
+mcp__atlassian__getConfluencePage(id: "<id>")
 ```
 
 Extract for each component:
@@ -520,57 +525,9 @@ Present MEDIUM issues as a list — one confirmation for all. Skip LOW unless us
 
 ## Step 10 — Commit → Push → PR
 
-Stage all new and modified files explicitly (never `git add .`):
+Run `/pr`. It handles staging, commit format, push, and PR description (Changelog / To Do / Config / How To QA / Notes) automatically.
 
-```bash
-git add src/components/<ComponentName>/   # one per new component
-git add src/pages/<PageName>/
-git add src/index.css
-git add index.html                         # if fonts were added
-git add cypress/e2e/<page-name>.cy.ts      # if E2E was written
-git add src/locales/                       # if i18n was added
-```
-
-Write commit:
-```bash
-git commit -m "$(cat <<'EOF'
-feat: implement <PageName> page
-
-- <N> new components: <list>
-- E2E tests for <X flows, or "none — static page">
-- i18n keys added <or "none">
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
-EOF
-)"
-```
-
-Push:
-```bash
-git push -u origin <branch>
-```
-
-Create PR:
-```bash
-gh pr create --assignee @me --title "feat: implement <PageName>" --body "$(cat <<'EOF'
-## Summary
-- Implemented <PageName> with <N> components: <list>
-- <note any notable behaviors, forms, interactions>
-
-## Figma
-<Figma URL>
-
-## Test plan
-- [ ] `npx tsc --noEmit` — 0 errors
-- [ ] `npm test -- --run` — all pass
-- [ ] `npm run build` — succeeds
-- [ ] E2E: <"all pass" or "N/A — static page">
-- [ ] i18n: <"keys added" or "N/A">
-
-## Screenshots
-<!-- Figma screenshot vs browser side by side -->
-EOF
-)"
+The `/pr` skill will derive the commit message from the current branch name and changed files. Make sure to provide any context it needs via the Notes section if there are things not obvious from the diff (e.g. Figma URL, which components are new vs updated, E2E / i18n status).
 ```
 
 Return the PR URL.

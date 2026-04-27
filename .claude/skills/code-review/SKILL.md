@@ -1,3 +1,8 @@
+---
+name: code-review
+description: Review the current diff vs main and produce a prioritized list of improvement notes grouped by severity (HIGH/MEDIUM/LOW).
+---
+
 # /code-review
 
 Review your own diff and produce a prioritized list of improvement notes.

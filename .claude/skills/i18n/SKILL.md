@@ -1,3 +1,8 @@
+---
+name: i18n
+description: Add or update translations for a component — detects hardcoded strings in TSX, proposes keys, updates en.json and pl.json, replaces strings with t() calls.
+---
+
 # /i18n
 
 Adds or updates translations for a component. Locates hardcoded strings in TSX, proposes keys, updates locale files, replaces strings with `t()` calls.

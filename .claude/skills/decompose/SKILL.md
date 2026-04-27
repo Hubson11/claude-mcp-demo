@@ -1,3 +1,8 @@
+---
+name: decompose
+description: Analyze a Figma design and propose a React component breakdown — implements nothing, outputs an approved plan with component tree, status (built/not built), and ready-to-use /figma-to-code invocations.
+---
+
 # /decompose
 
 Analyzes a Figma design and proposes a React component breakdown. Implements nothing — only produces an approved plan that becomes the input for `/figma-to-code`.
@@ -20,7 +25,7 @@ Only move to Step 1 once Figma URL is confirmed.
 ## Step 1 — Fetch the full Figma tree
 
 ```
-mcp__figma__get_figma_data(fileKey, nodeId)
+mcp__figma__get_design_context(fileKey, nodeId)
 ```
 
 - No `depth` parameter — full tree.
@@ -33,7 +38,7 @@ mcp__figma__get_figma_data(fileKey, nodeId)
 
 If a Confluence URL is provided, extract the page ID (numeric segment) and fetch:
 ```
-mcp__atlassian__getConfluencePage(cloudId: "claude-mcp-demo.atlassian.net", pageId: "<id>", contentFormat: "markdown")
+mcp__atlassian__getConfluencePage(id: "<id>")
 ```
 
 Extract only: prop names, types, behaviors, states.

@@ -1,3 +1,8 @@
+---
+name: review-fixer
+description: Read /code-review notes, evaluate which are valid, apply fixes, then verify tests and lint pass.
+---
+
 # /review-fixer
 
 Read code-review notes, judge which are valid and worth fixing, apply the fixes.
@@ -12,7 +17,7 @@ Read code-review notes, judge which are valid and worth fixing, apply the fixes.
    - Read the relevant file
    - Apply the fix
    - Verify it doesn't break surrounding code
-4. Run tests to confirm nothing broke: `npm test`
+4. Run tests to confirm nothing broke: `npm test -- --run`
 5. Report: list of applied fixes and list of skipped notes with reason
 
 ## Rules

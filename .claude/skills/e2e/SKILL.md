@@ -1,3 +1,8 @@
+---
+name: e2e
+description: Write Cypress E2E tests for a completed page — assesses whether E2E is warranted first, identifies user flows, uses data-testid selectors exclusively.
+---
+
 # /e2e
 
 Writes Cypress E2E tests for a completed page or flow. Asks first whether E2E is warranted — not every component needs it.

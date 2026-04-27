@@ -1,3 +1,8 @@
+---
+name: confluence
+description: Read functional spec from Confluence (props, behaviors, data-testid, API calls) or write/update a spec page. Uses mcp__atlassian__* tools.
+---
+
 # /confluence
 
 Read from or write to Confluence. Two modes: **read** (extract functional spec for use in other skills) and **write** (create or update a page with new content).

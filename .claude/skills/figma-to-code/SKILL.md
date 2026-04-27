@@ -1,3 +1,8 @@
+---
+name: figma-to-code
+description: Implement a component pixel-perfect from Figma — extracts tokens, downloads assets, writes TSX + CSS module + tests + Storybook story. Confluence provides behavioral spec only, never appearance.
+---
+
 # /figma-to-code
 
 Implements a component or page **pixel-perfect** from Figma.
@@ -232,7 +237,7 @@ curl -L -o "src/assets/<component-name>/<descriptive-name>.jpg" "<url-from-figma
 If a Confluence URL is provided, extract the page ID from the URL (numeric segment) and fetch:
 
 ```
-mcp__atlassian__getConfluencePage(cloudId: "claude-mcp-demo.atlassian.net", pageId: "<id>", contentFormat: "markdown")
+mcp__atlassian__getConfluencePage(id: "<id>")
 ```
 
 If no URL but a topic is known, search first:

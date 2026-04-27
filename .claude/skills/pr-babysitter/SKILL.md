@@ -1,3 +1,8 @@
+---
+name: pr-babysitter
+description: Monitor CI for the current open PR; if checks fail, read logs, fix the issue, and push — designed to run inside /loop, self-terminates when CI is green.
+---
+
 # /pr-babysitter
 
 Watch the CI status of the current open PR. If CI fails, read the logs, fix the issue, commit and push.

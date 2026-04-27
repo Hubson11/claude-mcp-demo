@@ -1,3 +1,8 @@
+---
+name: component
+description: Build a single React component interactively — Figma (required) + Confluence (optional); shows diff at every step and confirms before writing any file.
+---
+
 # /component
 
 Builds a single React component interactively — pixel-perfect from Figma, behavior from Confluence.
@@ -155,7 +160,7 @@ For every `OVERSIZED` line printed: parse the viewBox `"0 0 W H"` → add to the
 
 Extract the page ID from the URL (numeric segment) and fetch:
 ```
-mcp__atlassian__getConfluencePage(cloudId: "claude-mcp-demo.atlassian.net", pageId: "<id>", contentFormat: "markdown")
+mcp__atlassian__getConfluencePage(id: "<id>")
 ```
 
 Extract ONLY:
