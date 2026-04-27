@@ -1,0 +1,119 @@
+.container {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  padding: 32px 50px;
+  width: 100%;
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.divider {
+  width: 1px;
+  height: 87px;
+  background: #ebebeb;
+  flex-shrink: 0;
+  align-self: center;
+  margin: 0 28px;
+}
+
+.iconWrapper {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+}
+
+.iconCircle {
+  width: 84px;
+  height: 84px;
+  display: block;
+}
+
+.iconImg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+}
+
+.iconImg42 {
+  width: 42px;
+  height: 42px;
+}
+
+.iconImg40 {
+  width: 40px;
+  height: 40px;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: normal;
+  letter-spacing: -0.14px;
+  color: #acacac;
+  margin: 0;
+}
+
+.value {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -0.32px;
+  color: #333;
+  margin: 8px 0 0;
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.trendArrow {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.trendArrowDown {
+  transform: rotate(180deg);
+}
+
+.trendText {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: normal;
+  letter-spacing: -0.12px;
+  color: #292d32;
+  margin: 0;
+}
+
+.trendPercentUp {
+  font-weight: 700;
+  color: #00ac4f;
+}
+
+.trendPercentDown {
+  font-weight: 700;
+  color: #d0004b;
+}
