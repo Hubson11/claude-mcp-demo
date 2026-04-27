@@ -1,0 +1,300 @@
+/* CustomersTable — CSS Module */
+
+.container {
+  background: var(--color-card-bg);
+  border-radius: var(--radius-card);
+  width: 100%;
+  padding: 38px 38px 24px 38px;
+  box-sizing: border-box;
+}
+
+/* ── Card header ─────────────────────────── */
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-family: var(--font-base);
+  font-weight: 600; /* SemiBold */
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-lg);
+  margin: 0;
+  line-height: normal;
+}
+
+.subtitle {
+  font-family: var(--font-base);
+  font-weight: 400; /* Regular */
+  font-size: var(--font-size-md);
+  color: var(--color-teal);
+  letter-spacing: var(--letter-spacing-md);
+  line-height: normal;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── Search ──────────────────────────────── */
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 216px;
+  height: 38px;
+  background: var(--color-input-bg);
+  border-radius: var(--radius-input);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 8px;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0 12px 0 40px;
+  font-family: var(--font-base);
+  font-weight: 400;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-body);
+  letter-spacing: var(--letter-spacing-sm);
+  box-sizing: border-box;
+}
+
+.searchInput::placeholder {
+  color: var(--color-input-placeholder);
+}
+
+.searchWrapper:focus-within {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+/* ── Sort button ─────────────────────────── */
+
+.sortButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 154px;
+  height: 38px;
+  background: var(--color-input-bg);
+  border: none;
+  border-radius: var(--radius-input);
+  padding: 0 10px 0 14px;
+  cursor: pointer;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.sortLabel {
+  font-family: var(--font-base);
+  font-weight: 400;
+  font-size: var(--font-size-sm);
+  color: var(--color-sort-label);
+  letter-spacing: var(--letter-spacing-sm);
+  white-space: nowrap;
+  line-height: normal;
+}
+
+.sortValue {
+  font-weight: 600; /* SemiBold */
+  color: var(--color-sort-value);
+}
+
+.chevronIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ── Table ───────────────────────────────── */
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.th {
+  font-family: var(--font-base);
+  font-weight: 500; /* Medium */
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  letter-spacing: var(--letter-spacing-md);
+  text-align: left;
+  padding: 0 8px 16px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: normal;
+}
+
+.headerRow th:first-child {
+  padding-left: 0;
+}
+
+.headerRow {
+  border-bottom: 1px solid var(--color-text-muted);
+}
+
+.dataRow {
+  border-bottom: 1px solid #eeeeee;
+}
+
+.dataRow:last-child {
+  border-bottom: none;
+}
+
+.td {
+  font-family: var(--font-base);
+  font-weight: 500; /* Medium */
+  font-size: var(--font-size-md);
+  color: var(--color-text-body);
+  letter-spacing: var(--letter-spacing-md);
+  padding: 16px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: normal;
+  vertical-align: middle;
+}
+
+.dataRow td:first-child {
+  padding-left: 0;
+}
+
+/* ── Status badge ────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-base);
+  font-weight: 500;
+  font-size: var(--font-size-md);
+  letter-spacing: var(--letter-spacing-md);
+  border-radius: var(--radius-badge);
+  padding: 4px 12px;
+  white-space: nowrap;
+  line-height: normal;
+}
+
+.badgeActive {
+  background: var(--color-badge-active-bg);
+  border: 1px solid var(--color-badge-active-border);
+  color: var(--color-badge-active-text);
+}
+
+.badgeInactive {
+  background: var(--color-badge-inactive-bg);
+  border: 1px solid var(--color-badge-inactive-border);
+  color: var(--color-badge-inactive-text);
+}
+
+/* ── Pagination ──────────────────────────── */
+
+.paginationRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.showingInfo {
+  font-family: var(--font-base);
+  font-weight: 500;
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  letter-spacing: var(--letter-spacing-md);
+  line-height: normal;
+}
+
+.pageButtons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pageBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 6px 9px;
+  background: var(--color-pagination-inactive-bg);
+  border: 1px solid var(--color-pagination-inactive-border);
+  border-radius: var(--radius-badge);
+  font-family: var(--font-base);
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  color: var(--color-pagination-inactive-text);
+  letter-spacing: var(--letter-spacing-sm);
+  cursor: pointer;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pageBtnActive {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #ffffff;
+  padding: 6px 10px;
+}
+
+.ellipsis {
+  font-family: var(--font-base);
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-sm);
+  padding: 0 2px;
+  line-height: 1;
+}
+
+/* ── Accessibility ───────────────────────── */
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

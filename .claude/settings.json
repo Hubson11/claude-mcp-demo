@@ -5,9 +5,18 @@
       "Bash(git *)",
       "Bash(gh *)",
       "Bash(npm test)",
+      "Bash(npm test -- *)",
       "Bash(npm run *)",
       "Bash(npx vitest *)",
-      "Bash(npx cypress *)"
+      "Bash(npx cypress *)",
+      "Bash(npx tsc *)",
+      "Bash(mkdir *)",
+      "Bash(curl *)",
+      "Bash(file *)",
+      "Bash(grep *)",
+      "Bash(ls *)",
+      "Bash(for *)",
+      "Bash(mv *)"
     ]
   }
 }
