@@ -4,7 +4,7 @@ import type { CustomersData } from './NewCustomersTable'
 
 const customers: CustomersData[] = [
   { customer: 'Alice Adams',  company: 'Alpha',   phone: '(111) 111-0001', email: 'alice@alpha.com',  country: 'USA',       status: 'active' },
-  { customer: 'Bob Brown',    company: 'Beta',    phone: '(222) 222-0002', email: 'bob@beta.com',    country: 'UK',        status: 'inactive' },
+  { customer: 'Bob Brown',    company: 'Beta',    phone: '(222) 222-0002', email: 'bob@test.com',    country: 'UK',        status: 'inactive' },
   { customer: 'Carol Clark',  company: 'Gamma',   phone: '(333) 333-0003', email: 'carol@gamma.com', country: 'Canada',    status: 'active' },
   { customer: 'David Davis',  company: 'Delta',   phone: '(444) 444-0004', email: 'david@delta.com', country: 'Germany',   status: 'inactive' },
   { customer: 'Eva Evans',    company: 'Epsilon', phone: '(555) 555-0005', email: 'eva@eps.com',     country: 'France',    status: 'active' },
@@ -18,13 +18,13 @@ const customers: CustomersData[] = [
 describe('CustomersTable', () => {
   it('renders first 8 rows by default', () => {
     render(<NewCustomersTable customers={customers} />)
-    expect(screen.getAllByTestId('customer-row')).toHaveLength(2)
+    expect(screen.getAllByTestId('customer-row')).toHaveLength(8)
   })
 
   it('shows 2nd page rows after navigating', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('pagination-page-2'))
-    expect(screen.getAllByTestId('customer-row')).toHaveLength(7)
+    expect(screen.getAllByTestId('customer-row')).toHaveLength(2)
   })
 
   it('filters rows by search value', () => {
@@ -71,7 +71,7 @@ describe('CustomersTable', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('th-company'))
     const rows = screen.getAllByTestId('customer-row')
-    expect(rows[0].querySelector('td:nth-child(2)')?.textContent).toBe('Test')
+    expect(rows[0].querySelector('td:nth-child(2)')?.textContent).toBe('Alpha')
   })
 
   it('sorts column descending on second click', () => {
@@ -79,7 +79,7 @@ describe('CustomersTable', () => {
     fireEvent.click(screen.getByTestId('th-company'))
     fireEvent.click(screen.getByTestId('th-company'))
     const rows = screen.getAllByTestId('customer-row')
-    expect(rows[0].querySelector('td:nth-child(2)')?.textContent).toBe('a')
+    expect(rows[0].querySelector('td:nth-child(2)')?.textContent).toBe('Zeta')
   })
 
   it('renders active and inactive status badges', () => {
