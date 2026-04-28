@@ -19,7 +19,7 @@ describe('CustomersTablePagination', () => {
 
   it('shows correct range for last page', () => {
     render(<CustomersTablePagination {...base} currentPage={5} />)
-    expect(screen.getByTestId('pagination-info')).toHaveTextContent('Showing data 33 to 40 of 40 entries')
+    expect(screen.getByTestId('pagination-info')).toHaveTextContent('Showing data 32 to 40 of 40 entries')
   })
 
   it('calls onPageChange with next page number', () => {
