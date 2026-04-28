@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { CustomersTable } from './CustomersTable'
 import { mockCustomers } from '../../assets/mock/customers'
 

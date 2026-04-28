@@ -1,5 +1,5 @@
 // figma: https://www.figma.com/design/jQxGbsT4g3WZDPIfVXzZUx/CRM-Dashboard-Customers-List--Community-?node-id=501-3
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import styles from './CustomersTable.module.css'
 import { CustomersTableToolbar } from '../CustomersTableToolbar'
 import { CustomersTablePagination } from '../CustomersTablePagination'
@@ -50,8 +50,6 @@ export function CustomersTable({ customers }: Props) {
   const [sortColumn, setSortColumn] = useState<ColumnKey | null>(null)
   const [sortDir, setSortDir] = useState<SortDir>('asc')
 
-  useEffect(() => { setCurrentPage(1) }, [search, filter, sort, sortColumn])
-
   const processed = useMemo(() => {
     let result = [...customers]
 
@@ -84,6 +82,7 @@ export function CustomersTable({ customers }: Props) {
   const rows = processed.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   function handleColumnSort(col: ColumnKey) {
+    setCurrentPage(1)
     if (sortColumn === col) {
       setSortDir(d => d === 'asc' ? 'desc' : 'asc')
     } else {
@@ -96,7 +95,9 @@ export function CustomersTable({ customers }: Props) {
     <div className={styles.card} data-testid="customers-table">
       <CustomersTableToolbar
         search={search} sort={sort} filter={filter}
-        onSearchChange={setSearch} onSortChange={setSort} onFilterChange={setFilter}
+        onSearchChange={v => { setSearch(v); setCurrentPage(1) }}
+        onSortChange={v => { setSort(v); setCurrentPage(1) }}
+        onFilterChange={v => { setFilter(v); setCurrentPage(1) }}
       />
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
