@@ -1,0 +1,121 @@
+.root {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.22px;
+  color: #000000;
+  margin: 0;
+}
+
+.filterBtn {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: -0.14px;
+  color: #16c098;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.filterBtnActive {
+  font-weight: 600;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.searchBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f9fbff;
+  border-radius: 10px;
+  height: 38px;
+  width: 216px;
+  padding: 0 12px 0 40px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: -0.12px;
+  color: #292d32;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: #b5b7c0;
+}
+
+.sortBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f9fbff;
+  border-radius: 10px;
+  height: 38px;
+  width: 154px;
+  padding: 0 32px 0 14px;
+}
+
+.sortLabel {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: -0.12px;
+  color: #7e7e7e;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.sortValue {
+  font-weight: 600;
+  color: #3d3c42;
+}
+
+.sortSelect {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+}
+
+.chevronIcon {
+  position: absolute;
+  right: 10px;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}

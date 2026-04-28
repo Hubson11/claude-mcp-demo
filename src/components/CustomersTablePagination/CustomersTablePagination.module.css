@@ -1,0 +1,59 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.info {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #b5b7c0;
+  letter-spacing: -0.14px;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: -0.12px;
+  background: #f5f5f5;
+  border: 1px solid #eeeeee;
+  border-radius: 4px;
+  color: #404b52;
+  padding: 6px 9px;
+  cursor: pointer;
+  line-height: 1;
+  min-width: 28px;
+  text-align: center;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnActive {
+  composes: btn;
+  background: #5932ea;
+  border-color: #5932ea;
+  color: #ffffff;
+  cursor: default;
+}
+
+.ellipsis {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: -0.12px;
+  color: #000000;
+  padding: 0 2px;
+  line-height: 1;
+}
