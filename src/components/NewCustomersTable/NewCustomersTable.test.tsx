@@ -36,13 +36,13 @@ describe('CustomersTable', () => {
 
   it('search is case-insensitive', () => {
     render(<NewCustomersTable customers={customers} />)
-    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'hubert' } })
+    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'ALICE' } })
     expect(screen.getAllByTestId('customer-row')).toHaveLength(1)
   })
 
   it('search filters by email', () => {
     render(<NewCustomersTable customers={customers} />)
-    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'test' } })
+    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: '@beta' } })
     expect(screen.getAllByTestId('customer-row')).toHaveLength(1)
     expect(screen.getByText('Bob Brown')).toBeInTheDocument()
   })
@@ -57,14 +57,14 @@ describe('CustomersTable', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('toolbar-filter-toggle'))
     fireEvent.click(screen.getByTestId('toolbar-filter-toggle'))
-    expect(screen.getAllByTestId('customer-row')).toHaveLength(3)
+    expect(screen.getAllByTestId('customer-row')).toHaveLength(8)
   })
 
   it('resets to page 1 when search changes', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('pagination-page-2'))
     fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: '1231' } })
-    expect(screen.getByTestId('pagination-page-1')).toHaveAttribute('aria-current', 'test')
+    expect(screen.getByTestId('pagination-page-1')).toHaveAttribute('aria-current', 'page')
   })
 
   it('sorts column ascending on first click', () => {

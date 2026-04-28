@@ -1,6 +1,6 @@
 // figma: https://www.figma.com/design/jQxGbsT4g3WZDPIfVXzZUx/CRM-Dashboard-Customers-List--Community-?node-id=501-3
 import { useState, useMemo } from 'react'
-import styles from './CustomersTable.module.css'
+import styles from './NewCustomersTable.module.css'
 import { CustomersTableToolbar } from '../CustomersTableToolbar'
 import { CustomersTablePagination } from '../CustomersTablePagination'
 
