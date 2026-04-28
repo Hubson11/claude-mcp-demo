@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { NewCustomersTable, CustomersData } from './NewCustomersTable'
+import { NewCustomersTable } from './NewCustomersTable'
+import type { CustomersData } from './NewCustomersTable'
 
 const customers: CustomersData[] = [
   { customer: 'Alice Adams', company: 'vd',      phone: '555-0001', email: 'alice@example.com', country: 'USA',       status: 'active'   },
