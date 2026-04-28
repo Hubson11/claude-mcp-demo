@@ -2,6 +2,19 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { CustomersTable } from './CustomersTable'
 import type { CustomersData } from './CustomersTable'
 
+const customers: CustomersData[] = [
+  { customer: 'Alice Adams',  company: 'Alpha',   phone: '(111) 111-0001', email: 'alice@alpha.com',  country: 'USA',       status: 'active' },
+  { customer: 'Bob Brown',    company: 'Beta',    phone: '(222) 222-0002', email: 'bob@beta.com',    country: 'UK',        status: 'inactive' },
+  { customer: 'Carol Clark',  company: 'Gamma',   phone: '(333) 333-0003', email: 'carol@gamma.com', country: 'Canada',    status: 'active' },
+  { customer: 'David Davis',  company: 'Delta',   phone: '(444) 444-0004', email: 'david@delta.com', country: 'Germany',   status: 'inactive' },
+  { customer: 'Eva Evans',    company: 'Epsilon', phone: '(555) 555-0005', email: 'eva@eps.com',     country: 'France',    status: 'active' },
+  { customer: 'Frank Foster', company: 'Zeta',    phone: '(666) 666-0006', email: 'frank@zeta.com',  country: 'Italy',     status: 'active' },
+  { customer: 'Grace Green',  company: 'Eta',     phone: '(777) 777-0007', email: 'grace@eta.com',   country: 'Spain',     status: 'inactive' },
+  { customer: 'Henry Harris', company: 'Theta',   phone: '(888) 888-0008', email: 'henry@theta.com', country: 'Japan',     status: 'active' },
+  { customer: 'Iris Irving',  company: 'Iota',    phone: '(999) 999-0009', email: 'iris@iota.com',   country: 'Australia', status: 'active' },
+  { customer: 'Jack Johnson', company: 'Kappa',   phone: '(100) 100-0010', email: 'jack@kappa.com',  country: 'Brazil',    status: 'inactive' },
+]
+
 describe('CustomersTable', () => {
   it('renders first 8 rows by default', () => {
     render(<CustomersTable customers={customers} />)

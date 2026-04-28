@@ -45,7 +45,7 @@ describe('Statistics', () => {
 
   it('shows "this month" text for trending stats', () => {
     render(<Statistics {...defaultProps} />)
-    const thisMonthTexts = screen.getAllByText(/this year/)
+    const thisMonthTexts = screen.getAllByText(/this month/)
     expect(thisMonthTexts).toHaveLength(2)
   })
 })
