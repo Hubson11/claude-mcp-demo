@@ -2,10 +2,26 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { NewCustomersTable } from './NewCustomersTable'
 import type { CustomersData } from './NewCustomersTable'
 
+// Companies are arranged so 'vcvxcsd' is alphabetically first and 'wqewf' is last
+const customers: CustomersData[] = [
+  { customer: 'Alice Adams', company: 'vh-llc',    phone: '100-0001', email: 'alice@example.com', country: 'USA',     status: 'active'   },
+  { customer: 'Bob Brown',   company: 'vj-co',     phone: '100-0002', email: 'bob@example.com',   country: 'UK',      status: 'inactive' },
+  { customer: 'C User',      company: 've-corp',   phone: '100-2222', email: 'c@example.com',     country: 'Canada',  status: 'active'   },
+  { customer: 'D User',      company: 'vi-group',  phone: '100-0004', email: 'd@example.com',     country: 'Germany', status: 'inactive' },
+  { customer: 'E User',      company: 'vf-inc',    phone: '100-0005', email: 'e@example.com',     country: 'France',  status: 'active'   },
+  { customer: 'F User',      company: 'vk-intl',   phone: '100-0006', email: 'f@example.com',     country: 'Spain',   status: 'active'   },
+  { customer: 'G User',      company: 'vg-ltd',    phone: '100-0007', email: 'g@example.com',     country: 'Italy',   status: 'active'   },
+  { customer: 'H User',      company: 'vl-sa',     phone: '100-0008', email: 'h@example.com',     country: 'Japan',   status: 'active'   },
+  { customer: 'I User',      company: 'vm-team',   phone: '100-0009', email: 'i@example.com',     country: 'India',   status: 'active'   },
+  { customer: 'J User',      company: 'vn-works',  phone: '100-0010', email: 'j@example.com',     country: 'Brazil',  status: 'active'   },
+  { customer: 'K User',      company: 'vcvxcsd',   phone: '100-0011', email: 'k@example.com',     country: 'Poland',  status: 'active'   },
+  { customer: 'L User',      company: 'wqewf',     phone: '100-0012', email: 'l@example.com',     country: 'Mexico',  status: 'active'   },
+]
+
 describe('CustomersTable', () => {
   it('renders first 8 rows by default', () => {
     render(<NewCustomersTable customers={customers} />)
-    expect(screen.getAllByTestId('customer-row')).toHaveLength(2)
+    expect(screen.getAllByTestId('customer-row')).toHaveLength(8)
   })
 
   it('shows 2nd page rows after navigating', () => {
@@ -44,14 +60,14 @@ describe('CustomersTable', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('toolbar-filter-toggle'))
     fireEvent.click(screen.getByTestId('toolbar-filter-toggle'))
-    expect(screen.getAllByTestId('customer-row')).toHaveLength(122)
+    expect(screen.getAllByTestId('customer-row')).toHaveLength(8)
   })
 
   it('resets to page 1 when search changes', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('pagination-page-2'))
     fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: '2222' } })
-    expect(screen.getByTestId('pagination-page-10')).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByTestId('pagination-page-1')).toHaveAttribute('aria-current', 'page')
   })
 
   it('sorts column ascending on first click', () => {
