@@ -11,72 +11,73 @@ Builds a single React component interactively — pixel-perfect from Figma, beha
 
 ---
 
-## Inputs — ask one at a time
+## Inputs
 
-Collect inputs sequentially. Never ask for more than one thing per message.
+Resolve each input in order. Never ask for more than one thing per message.
 
 1. If `Figma` URL not provided → ask: "What's the Figma URL for this component?" — wait for answer.
-2. If `Component` name not provided → infer from Figma node name and ask: "I'll call it `<InferredName>` — does that work?" — wait for confirmation or correction.
-3. If `Confluence` URL not provided and component has non-trivial behavior → ask: "Do you have a Confluence spec for this component, or should I infer behavior from Figma?" — wait for answer.
+2. `Component` name resolution — pick the first rule that applies, do not ask otherwise:
+   - Provided explicitly in the invocation → use it as-is, no confirmation.
+   - Not provided, Figma node name is specific (not "Frame", "Group", "Rectangle", "Component 1" etc.) → use it silently, state: "Using name `<InferredName>` from Figma."
+   - Not provided, Figma node name is generic or ambiguous → ask once: "I'd call it `<InferredName>` — confirm or correct?"
+3. (Optional) `Confluence` URL — if provided, fetch in Phase 1. If not provided, proceed without blocking; behavior will be inferred from Figma and noted inline.
+4. (Optional) `FigmaTree` — pre-fetched Figma tree JSON passed by a parent `/component` run for this child node. If provided, **skip** `mcp__figma__get_design_context` in Phase 1 entirely and use this data directly.
 
-Only move to Step 0 once Figma URL and Component name are confirmed.
+Only move to Phase 1 once the Figma URL is known.
 
 ---
 
-## Step 0 — Check for existing implementation
+## Phase 1 — Gather (run ALL in parallel)
 
-Before fetching anything from Figma, check whether this node was already implemented:
+Fire these simultaneously — do not wait for one before starting another:
 
+1. **Check for existing implementation** (local grep, fast):
 ```bash
-grep -rl "node-id=<nodeId>" src/components/ src/pages/ 2>/dev/null
+grep -rl "node-id=<nodeId-dash>\|node-id=<nodeId-colon>" src/components/ src/pages/ 2>/dev/null
 ```
+Both formats from URL (`1-234`) and API (`1:234`).
 
-Try both nodeId formats from the URL (`1-234`) and API (`1:234`):
+2. **Fetch Figma tree** — SKIP this step if `FigmaTree` was passed as input; use that data instead:
+   `mcp__figma__get_design_context(fileKey, nodeId)`
 
-```bash
-grep -rl "node-id=1-234\|node-id=1:234" src/components/ src/pages/ 2>/dev/null
-```
+3. **Fetch Confluence spec** (if URL provided): `mcp__atlassian__getConfluencePage(id: "<id>")`
 
-**If a match is found:**
+**After all three complete:**
+
+**If grep found a match:**
 ```
 ⚠️  This Figma node is already implemented:
     → src/components/ProductCard/ProductCard.tsx
-    Component: ProductCard
 
 Options:
-  A) Use the existing component as-is
-  B) Update it (re-run implementation for this node)
-  C) Create a new component anyway (different context)
-
+  A) Use as-is  B) Update it  C) Create new anyway
 → Which option?
 ```
+Wait for choice before continuing.
 
-Wait for the user's choice before proceeding.
-
-**If no match is found:** continue to Step 1.
-
----
-
-## Step 1 — Fetch Figma tree
-
-```
-mcp__figma__get_design_context(fileKey, nodeId)
-```
-
-No depth limit. Read every node: fills, strokes, typography, layout, effects, children.
-
-**Read the response type first — it determines the entire strategy:**
+**Process Figma response** — read response type first, it determines the strategy:
 
 | Response contains | Action |
 |---|---|
 | Code Connect snippets | Use the mapped component directly — do not re-implement |
 | Design tokens as CSS variables | Map to project's existing `index.css` custom properties |
 | Design annotations / designer notes | Follow them — they override inferred behavior |
-| Raw hex + absolute positions only | Rely on `get_screenshot`; extract all values manually from the tree |
+| Raw hex + absolute positions only | Rely on screenshot; extract all values manually from the tree |
 
 From the reference React+Tailwind snippet: extract semantic HTML tag choices and accessible attributes (`aria-label`, `role`). Ignore all Tailwind class names — rewrite as CSS module classes.
 
-Extract and display a token summary:
+**Process Confluence response** — extract ONLY:
+- Props interface (names, types, required/optional)
+- States and triggers
+- Behaviors (click → what happens → after Xms → what)
+- Validations and error messages
+- `data-testid` values
+
+Do not extract colors, spacing, layout from Confluence (Figma owns that).
+
+If Confluence URL was not provided → note inline: "No Confluence spec — behavior inferred from Figma." Then continue without blocking.
+
+Display extracted token summary + structured Confluence spec together:
 
 ```
 TOKENS EXTRACTED
@@ -97,46 +98,104 @@ Instances:  Button (INSTANCE) → src/components/Button exists ✅ reuse | Icon 
 Fonts:      Noto Sans (400,700) + Nunito Sans (400,600) → one combined Google Fonts link
 ```
 
-From the reference code snippet returned by `get_design_context`: extract semantic HTML tag choices and accessible attributes (`aria-label`, `role`). Ignore all Tailwind class names — rewrite as CSS module classes.
-
-If something is ambiguous (e.g. two conflicting font sizes for what appears to be the same element) → ask which one to use.
+If something is ambiguous (e.g. two conflicting font sizes) → ask which one to use.
 
 ---
 
-## Step 2 — Download missing images
+## Phase 1.5 — Decomposition Check
 
-Check `src/assets/<component-name>/` before downloading:
+Run this immediately after Phase 1 completes — **before downloading assets or extracting tokens**.
+
+**Goal:** Decide whether to build as a single file or split into smaller child components first. If decomposing, each child is built as a separate `/component` run using Figma data already in memory — no extra API calls.
+
+### Signals that decomposition is warranted (any 2+ → propose split)
+
+| Signal | Example |
+|---|---|
+| 3+ named top-level frames/sections with distinct concerns | `Filters`, `Table`, `Pagination` as siblings |
+| Total node count exceeds ~150 | deeply nested, large tree |
+| Repeating pattern identified | `Row` frame repeated N times inside a container |
+| Multiple distinct COMPONENT_SET instances | `Dropdown`, `Badge`, `Avatar` each with own variants |
+| Layer names clearly map to separate UI responsibilities | `Search`, `Toolbar`, `TableHeader`, `TableBody` |
+
+If none apply → skip this phase, proceed to Phase 2 as usual.
+
+### If decomposition is warranted — present the proposal first
+
+Show the component tree before asking anything:
 
 ```
-src/assets/ProductCard/
-  product-placeholder.jpg  ✅ exists → skip
-  badge-bg.png              ❌ missing → download
+DECOMPOSITION PROPOSAL
+─────────────────────────────
+<ParentComponent>               ← thin wrapper, primarily composes children
+├── <ChildA>                    nodeId: 1:234   [not yet built]
+│   ├── reason: distinct search/filter concern
+│   └── Figma data: already in memory ✅ — no extra API call
+├── <ChildB>                    nodeId: 1:567   [not yet built]
+│   ├── reason: repeating table row unit
+│   └── Figma data: already in memory ✅ — no extra API call
+└── <ChildC>                    nodeId: 1:890   [not yet built]
+    ├── reason: self-contained pagination block
+    └── Figma data: already in memory ✅ — no extra API call
+
+Build order: ChildA → ChildB → ChildC → ParentComponent (composes them)
+─────────────────────────────
+→ Approve this split, adjust it, or build as single file?
 ```
 
-Image URLs are returned by `get_design_context` in fill objects. Download all missing files first (always use `.png` as placeholder extension):
+Wait for confirmation. Do NOT proceed until answered.
+
+### On approval — spawn child /component runs with cached Figma data
+
+For each approved child, invoke `/component` and pass the relevant sub-tree extracted from the parent's Phase 1 Figma response. The child must skip `mcp__figma__get_design_context`.
+
+Invocation format:
+
+```
+/component
+Figma: https://www.figma.com/design/<fileKey>?node-id=<childNodeId>
+Component: <ChildName>
+Confluence: <same URL if relevant, omit otherwise>
+FigmaTree: <sub-tree JSON rooted at childNodeId, extracted from parent's get_design_context response>
+```
+
+Rules for `FigmaTree` extraction:
+- Include only the sub-tree rooted at the child's nodeId — not the full parent response.
+- Include all descendants: children, styles, constraints, component instances within that sub-tree.
+- The child run will use this data directly and must not call `mcp__figma__get_design_context`.
+
+Build children **one at a time in the listed order**. Wait for user confirmation that each child is complete before starting the next. After all children are done, build the parent that imports and composes them.
+
+---
+
+## Phase 2 — Assets + Token extraction (run ALL in parallel)
+
+Fire these simultaneously — token analysis is CPU-only, asset downloads are I/O-only, they do not block each other:
+
+**Track A — Asset downloads:**
+
+1. **Download missing images** — skip files that already exist on disk:
 
 ```bash
 mkdir -p src/assets/<component-name>
-curl -L -o "src/assets/<component-name>/<name>.png" "<url-from-response>"
-# repeat for every asset
+# For each asset, check before downloading:
+[ -f "src/assets/<component-name>/<name>.png" ] || curl -L -o "src/assets/<component-name>/<name>.png" "<url>"
+# Repeat for each asset; all curl calls fire in parallel
 ```
 
-**After ALL downloads, run this fix sequence in order — mandatory, no skipping:**
+After all downloads complete, run this fix sequence in order — mandatory, no skipping:
 
 ```bash
 # 1. Rename SVGs saved with wrong extension
-#    Figma serves SVG content regardless of the URL extension — .png files may actually be SVGs.
 for f in src/assets/<component-name>/*.png src/assets/<component-name>/*.jpg; do
   [ -f "$f" ] || continue
   if file "$f" | grep -q "SVG"; then mv "$f" "${f%.*}.svg"; fi
 done
 
-# 2. Fix invisible icons
-#    Figma exports SVGs with opacity="0" on the root <g> when the layer has 0% opacity.
+# 2. Fix invisible icons (opacity="0" on root <g>)
 grep -rl 'opacity="0"' src/assets/<component-name>/ | xargs -r sed -i 's/opacity="0"/opacity="1"/g'
 
-# 3. Detect oversized icons and print each one's viewBox
-#    Figma SVGs use width="100%" height="100%" which collapses to 0 without a constrained parent.
+# 3. Detect oversized icons
 for f in src/assets/<component-name>/*.svg; do
   [ -f "$f" ] || continue
   if grep -q 'width="100%"' "$f"; then
@@ -146,39 +205,16 @@ for f in src/assets/<component-name>/*.svg; do
 done
 ```
 
-For every `OVERSIZED` line printed: parse the viewBox `"0 0 W H"` → add to the CSS module for every `<img>` that uses that asset:
-
+For every `OVERSIZED` line: parse viewBox `"0 0 W H"` → add to CSS module:
 ```css
 .iconClassName img { width: Wpx; height: Hpx; display: block; flex-shrink: 0; }
 ```
 
-**Use the FINAL filename (with correct extension after renaming) in all import statements.**
+Use the FINAL filename (correct extension after renaming) in all import statements.
 
----
+**Track B — Token extraction and validation (runs in parallel with Track A):**
 
-## Step 3 — Read Confluence spec (if URL provided)
-
-Extract the page ID from the URL (numeric segment) and fetch:
-```
-mcp__atlassian__getConfluencePage(id: "<id>")
-```
-
-Extract ONLY:
-- Props interface (names, types, required/optional)
-- States and triggers
-- Behaviors (click → what happens → after Xms → what)
-- Validations and error messages
-- `data-testid` values
-
-Display as structured spec — do not extract colors, spacing, layout (Figma owns that).
-
-If Confluence URL not provided and component has non-trivial behavior → ask: "No Confluence URL — should I infer behavior from Figma, or do you have a spec?"
-
----
-
-## Step 3b — Token pre-validation
-
-Before showing any code diff, verify each extracted token against the Figma tree:
+Build the token validation table from the Figma tree:
 
 | Token | Figma value | Your token | Match? |
 |---|---|---|---|
@@ -186,61 +222,72 @@ Before showing any code diff, verify each extracted token against the Figma tree
 | card-width | 408px | 408px | ✅ |
 | heading-size | 24px | 22px | ❌ → fix |
 
-Fix every ❌ before continuing. Also call `mcp__figma__get_screenshot(fileKey, nodeId)` and save the image — it is the pixel-perfect reference for Step 7.
+Fix every ❌ immediately — do not carry errors forward.
 
-**→ Confirm token map is correct before proceeding.**
+Simultaneously scan existing global files to avoid duplicates:
+```bash
+# Check which Google Font families are already in index.html
+grep -i "fonts.googleapis.com" index.html
+
+# Check which CSS custom properties already exist in src/index.css
+grep -o '\-\-[a-zA-Z0-9_-]*' src/index.css | sort -u
+```
 
 ---
 
-## Step 3c — Google Fonts
+## Step 3 — Tokens + Fonts + CSS: single confirmation gate
 
-Scan all text nodes and collect every unique `fontFamily` + `fontWeight` + italic variant. For every non-system font, add to `index.html` `<head>`.
+Wait for both Phase 2 tracks to complete. Then show everything that needs user approval in **one message**:
 
-**Single family:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-```
+**A. Token validation result:**
+- If all ✅ → state "All tokens verified ✅" and skip asking for confirmation on this section.
+- If any ❌ were found → list the fixes applied and ask: "Token fixes applied — does this look right?"
 
-**Multiple families — one `<link>` with `&family=` (single HTTP request):**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-```
-
-- Always `display=swap`
-- Never separate `<link>` tags per font — always combine in one URL
-- Show diff for `index.html` and wait for confirmation before proceeding
-
----
-
-## Step 4 — CSS tokens diff
-
-Show what will be added to `src/index.css` as a diff. Wait for confirmation.
+**B. Google Fonts diff** (only if fonts are NOT already in `index.html`; skip entirely if grep found them):
 
 ```diff
-  /* existing content */
+--- a/index.html
++++ b/index.html
++  <link rel="preconnect" href="https://fonts.googleapis.com">
++  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+```
+
+Rules:
+- Always `display=swap`
+- Never separate `<link>` tags per font — combine multiple families in one URL: `&family=FamilyName:wght@...`
+- Skip this diff entirely if all required font families are already present in `index.html`
+
+**C. CSS tokens diff** — include only vars that are NOT already in `src/index.css` (based on Track B grep results). If all required vars already exist, skip this section entirely and state so:
+
+```diff
+--- a/src/index.css
++++ b/src/index.css
 + --color-badge-sale: #c0392b;
 + --font-heading: 'Noto Sans', sans-serif;
 + --product-card-width: 408px;
 ```
 
-**→ Confirm to proceed, or describe what to change.**
+**→ Confirm all sections that have changes, or describe what to change.**
+
+If A had no errors, B is skipped (fonts present), and C is skipped (vars already defined) → proceed automatically and state: "All tokens, fonts, and CSS vars already up to date — proceeding to Step 4."
 
 ---
 
-## Step 5 — Component file diff
+## Step 4 — All code diffs at once
 
-Show full unified diff for each new file:
+Show ALL diffs in one message — TSX, CSS module, barrel, test, story. User confirms or revises once. Then write all files in parallel.
 
+Show in this order:
+
+**1. Component TSX:**
 ```diff
 diff --git a/src/components/ProductCard/ProductCard.tsx b/src/components/ProductCard/ProductCard.tsx
 new file mode 100644
 --- /dev/null
 +++ b/src/components/ProductCard/ProductCard.tsx
 @@ -0,0 +1,52 @@
++// figma: https://www.figma.com/design/<fileKey>?node-id=<nodeId>
 +import { useState, useEffect } from 'react'
 +import styles from './ProductCard.module.css'
 +
@@ -250,13 +297,17 @@ new file mode 100644
 +  ...
 +}
 +
-+export function ProductCard({ id, name, price, badge, image, soldOut, onAddToCart }: ProductCardProps) {
++export function ProductCard({ ... }: ProductCardProps) {
 +  ...
 +}
 ```
 
-Then CSS module:
+The first line of every component `.tsx` file must be the Figma annotation:
+```tsx
+// figma: https://www.figma.com/design/<fileKey>?node-id=<nodeId>
+```
 
+**2. CSS module:**
 ```diff
 diff --git a/src/components/ProductCard/ProductCard.module.css ...
 new file mode 100644
@@ -269,8 +320,7 @@ new file mode 100644
 +}
 ```
 
-Then barrel:
-
+**3. Barrel:**
 ```diff
 diff --git a/src/components/ProductCard/index.ts ...
 +++ b/src/components/ProductCard/index.ts
@@ -278,20 +328,9 @@ diff --git a/src/components/ProductCard/index.ts ...
 +export { ProductCard } from './ProductCard'
 ```
 
-**→ Confirm to write files, or describe what to change.**
-
-Write files only after confirmation.
-
----
-
-## Step 6 — Tests diff
-
-Show unified diff for the test file before writing:
-
+**4. Test:**
 ```diff
 diff --git a/src/components/ProductCard/ProductCard.test.tsx ...
-new file mode 100644
---- /dev/null
 +++ b/src/components/ProductCard/ProductCard.test.tsx
 @@ -0,0 +1,65 @@
 +import { render, screen, fireEvent, act } from '@testing-library/react'
@@ -305,18 +344,9 @@ new file mode 100644
 
 Tests cover only behavior (from Confluence spec / inferred from Figma states). No CSS assertions.
 
-**→ Confirm to write, or describe what to change.**
-
----
-
-## Step 6b — Storybook story diff
-
-Show unified diff for the story file before writing:
-
+**5. Story:**
 ```diff
 diff --git a/src/components/ProductCard/ProductCard.stories.tsx ...
-new file mode 100644
---- /dev/null
 +++ b/src/components/ProductCard/ProductCard.stories.tsx
 @@ -0,0 +1,35 @@
 +import type { Meta, StoryObj } from '@storybook/react'
@@ -331,67 +361,56 @@ new file mode 100644
 +
 +type Story = StoryObj<typeof ProductCard>
 +
-+export const Default: Story = {
-+  args: {
-+    id: '1',
-+    name: 'Wireless Headphones',
-+    price: 129.99,
-+    image: '/src/assets/ProductCard/product-1.jpg',
-+    category: 'brand',
-+  },
-+}
-+
-+export const WithBadge: Story = {
-+  args: { ...Default.args, badge: 'New' },
-+}
-+
-+export const SoldOut: Story = {
-+  args: { ...Default.args, soldOut: true },
-+}
++export const Default: Story = { args: { ... } }
++export const WithBadge: Story = { args: { ...Default.args, badge: 'New' } }
++export const SoldOut: Story = { args: { ...Default.args, soldOut: true } }
 ```
 
-Rules for stories:
-- If the component is a COMPONENT_SET → one story per variant value, named after the variant:
-  - `State=Default` → `export const Default`
-  - `State=Hover` → `export const Hover: Story = { args: { ...Default.args, state: 'hover' } }`
-  - `State=Disabled` → `export const Disabled`
-  - `Size=S` → `export const Small`
-- One additional story per state from Confluence (e.g. `WithBadge`, `SoldOut`, `Loading`)
+Story rules:
+- COMPONENT_SET → one story per variant (State=Default → `Default`, State=Hover → `Hover`, etc.)
+- One additional story per Confluence state (e.g. `WithBadge`, `SoldOut`, `Loading`)
 - `Default` must have all required props with realistic values
 - Spread `Default.args` in all variant stories — never duplicate
 
-**→ Confirm to write, or describe what to change.**
+**→ Confirm to write ALL files, or describe what to change.**
 
-After writing, verify in Storybook:
+On confirmation: write TSX, CSS module, barrel, test, and story files simultaneously in parallel.
+
+---
+
+## Step 5 — Automated verification (run before asking user anything)
+
+Immediately after writing files, run both in parallel:
 
 ```bash
-npm run storybook
+npx tsc --noEmit
+# simultaneously:
+npm test -- --run
 ```
 
-`Default` must load without errors. All variant stories must show visually distinct states. No "Missing required prop" warnings. Fix before proceeding.
+Show output of both. If errors → show diff of the fix, wait for confirmation, then apply. Do NOT move to Step 6 until types are clean and tests are green. Do NOT ask the user to check Storybook while there are type or test errors.
 
 ---
 
-## Step 6c — Write Figma annotation
+## Step 6 — Visual verification (Storybook)
 
-After writing the component `.tsx` file, ensure the **first line** is the Figma annotation:
+Only proceed here once Step 5 passes cleanly.
 
-```tsx
-// figma: https://www.figma.com/design/<fileKey>?node-id=<nodeId>
-import ...
+Fetch screenshot now (deferred from Phase 2 to avoid a wasted API call on cancelled flows):
+`mcp__figma__get_screenshot(fileKey, nodeId)`
+
+Ask the user to open Storybook:
+
+```
+Run this and let me know what you see:
+  npm run storybook
 ```
 
-Include this in the component file diff shown in Step 5 — not as a separate step.
+Navigate to `http://localhost:6006`. Open the `Default` story and compare it side by side with the Figma screenshot. Report any discrepancies. `Default` must load without errors. All variant stories must show visually distinct states. No "Missing required prop" warnings.
 
----
+Scan each element systematically in this order:
 
-## Step 7 — Verify
-
-### 7a — Visual comparison
-
-Open `http://localhost:5173` and place it side by side with the Figma screenshot captured in Step 3b. Scan each element systematically in this order:
-
-1. **Fonts** — family, weight, size, line-height, letter-spacing (check DevTools → Network → filter "font": all must be 200)
+1. **Fonts** — family, weight, size, line-height, letter-spacing (DevTools → Network → filter "font": all must be 200)
 2. **Colors** — background, text, border, icon fill — hex by hex
 3. **Spacing** — padding, gap, margin — pixel by pixel
 4. **Dimensions** — width, height of containers and elements
@@ -404,20 +423,19 @@ Open `http://localhost:5173` and place it side by side with the Figma screenshot
 
 For every discrepancy → fix CSS, show diff, wait for confirmation before applying.
 
-### 7b — Font verification
+**Font 404 check:** In DevTools → Network tab → filter "font". Every font file must return 200. If any 404 → fix the `index.html` link tag before proceeding.
 
-In DevTools → Network tab → filter "font". Every font file referenced in CSS must return status 200. If any return 404 or are missing → fix the `index.html` link tag before proceeding.
+---
 
-### 7c — Types and tests
+## Step 7 — Publish
 
-Run in order:
+After verification passes (types clean, tests green, Storybook matches Figma):
 
-```bash
-npx tsc --noEmit
-npm test -- --run
-```
+1. Run `/commit` — stage all new/changed files and create a conventional commit message.
+2. Run `/push` — push the branch to remote.
+3. Run `/pr` — open a GitHub Pull Request with a structured description.
 
-Show output. If errors → fix and show diff of the fix before applying.
+Do not skip any of these three steps. Run them in order (commit → push → PR).
 
 ---
 
@@ -427,6 +445,7 @@ Show output. If errors → fix and show diff of the fix before applying.
 - Never ask as a ritual — if it's obvious from Figma or Confluence, just do it
 - Never write files before showing the diff and getting confirmation
 - If user gives feedback instead of confirming → apply it, show updated diff, wait again
+- **Never add the component to a page or route** — use Storybook stories as the only integration point
 
 ---
 
