@@ -1,36 +1,39 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { NewCustomersTable } from './NewCustomersTable'
+import { mockCustomers } from '../../assets/mock/customers'
+
+const customers = mockCustomers
 
 describe('CustomersTable', () => {
   it('renders first 8 rows by default', () => {
     render(<NewCustomersTable customers={customers} />)
-    expect(screen.getAllByTestId('customer-row')).toHaveLength(2)
+    expect(screen.getAllByTestId('customer-row')).toHaveLength(8)
   })
 
   it('shows 2nd page rows after navigating', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('pagination-page-2'))
-    expect(screen.getAllByTestId('customer-row')).toHaveLength(7)
+    expect(screen.getAllByTestId('customer-row')).toHaveLength(8)
   })
 
   it('filters rows by search value', () => {
     render(<NewCustomersTable customers={customers} />)
-    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'Hubert' } })
+    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'Jane' } })
     expect(screen.getAllByTestId('customer-row')).toHaveLength(1)
-    expect(screen.getByText('Alice Adams')).toBeInTheDocument()
+    expect(screen.getByText('Jane Cooper')).toBeInTheDocument()
   })
 
   it('search is case-insensitive', () => {
     render(<NewCustomersTable customers={customers} />)
-    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'ALICE' } })
+    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'JANE' } })
     expect(screen.getAllByTestId('customer-row')).toHaveLength(1)
   })
 
   it('search filters by email', () => {
     render(<NewCustomersTable customers={customers} />)
-    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'bob' } })
+    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'floyd' } })
     expect(screen.getAllByTestId('customer-row')).toHaveLength(1)
-    expect(screen.getByText('Bob Brown')).toBeInTheDocument()
+    expect(screen.getByText('Floyd Miles')).toBeInTheDocument()
   })
 
   it('shows only active rows when filter toggled', () => {
@@ -57,7 +60,7 @@ describe('CustomersTable', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('th-company'))
     const rows = screen.getAllByTestId('customer-row')
-    expect(rows[0].querySelector('td:nth-child(2)')?.textContent).toBe('vcvxcsd')
+    expect(rows[0].querySelector('td:nth-child(2)')?.textContent).toBe('Adobe')
   })
 
   it('sorts column descending on second click', () => {
@@ -65,7 +68,7 @@ describe('CustomersTable', () => {
     fireEvent.click(screen.getByTestId('th-company'))
     fireEvent.click(screen.getByTestId('th-company'))
     const rows = screen.getAllByTestId('customer-row')
-    expect(rows[0].querySelector('td:nth-child(2)')?.textContent).toBe('wqewf')
+    expect(rows[0].querySelector('td:nth-child(2)')?.textContent).toBe('Zoom')
   })
 
   it('renders active and inactive status badges', () => {
