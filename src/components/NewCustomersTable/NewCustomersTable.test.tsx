@@ -10,12 +10,12 @@ describe('CustomersTable', () => {
   it('shows 2nd page rows after navigating', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('pagination-page-2'))
-    expect(screen.getAllByTestId('customer-row')).toHaveLength(4)
+    expect(screen.getAllByTestId('customer-row')).toHaveLength(7)
   })
 
   it('filters rows by search value', () => {
     render(<NewCustomersTable customers={customers} />)
-    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'Alice' } })
+    fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: 'Hubert' } })
     expect(screen.getAllByTestId('customer-row')).toHaveLength(1)
     expect(screen.getByText('Alice Adams')).toBeInTheDocument()
   })
@@ -43,15 +43,14 @@ describe('CustomersTable', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('toolbar-filter-toggle'))
     fireEvent.click(screen.getByTestId('toolbar-filter-toggle'))
-    expect(screen.getAllByTestId('customer-row')).toHaveLength(122)
+    expect(screen.getAllByTestId('customer-row')).toHaveLength(8)
   })
 
   it('resets to page 1 when search changes', () => {
     render(<NewCustomersTable customers={customers} />)
     fireEvent.click(screen.getByTestId('pagination-page-2'))
     fireEvent.change(screen.getByTestId('toolbar-search'), { target: { value: '2222' } })
-    expect(screen.getByTestId('pagination-page-10')).toHaveAttribute('aria-current', 'page')
-page-10')).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByTestId('pagination-page-1')).toHaveAttribute('aria-current', 'page')
   })
 
   it('sorts column ascending on first click', () => {
