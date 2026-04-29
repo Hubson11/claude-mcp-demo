@@ -1,0 +1,105 @@
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  padding: 32px 40px 28px;
+  width: 100%;
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.th {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #b5b7c0;
+  letter-spacing: -0.14px;
+  text-align: left;
+  padding: 0 8px 20px 0;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid #eeeeee;
+  user-select: none;
+  text-overflow: ellipsis;
+}
+
+.th:last-child {
+  text-align: center;
+}
+
+.sortIndicator {
+  font-size: 12px;
+}
+
+.row {
+  border-bottom: 1px solid #eeeeee;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.td {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #292d32;
+  letter-spacing: -0.14px;
+  padding: 18px 8px 18px 0;
+  overflow: hidden;
+}
+
+.td:last-child {
+  text-align: center;
+  padding-right: 0;
+}
+
+.cell {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.colCustomer { width: 19%; }
+.colCompany  { width: 15%; }
+.colPhone    { width: 16%; }
+.colEmail    { width: 17%; }
+.colCountry  { width: 13%; }
+.colStatus   { width: 20%; }
+
+.badgeActive {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: -0.14px;
+  color: #008767;
+  background: rgba(22, 192, 152, 0.38);
+  border: 1px solid #00b087;
+  border-radius: 4px;
+  padding: 4px 12px;
+  white-space: nowrap;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+.badgeInactive {
+  composes: badgeActive;
+  color: #df0404;
+  background: #ffc5c5;
+  border-color: #df0404;
+}
+
+.paginationRow {
+  margin-top: 28px;
+}
