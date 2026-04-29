@@ -29,6 +29,7 @@
   white-space: nowrap;
   border-bottom: 2px solid #eeeeee;
   user-select: none;
+  text-overflow: ellipsis;
 }
 
 .th:last-child {
@@ -71,10 +72,10 @@
 
 .colCustomer { width: 19%; }
 .colCompany  { width: 15%; }
-.colPhone    { width: 18%; }
-.colEmail    { width: 23%; }
-.colCountry  { width: 16%; }
-.colStatus   { width: 9%; }
+.colPhone    { width: 16%; }
+.colEmail    { width: 17%; }
+.colCountry  { width: 13%; }
+.colStatus   { width: 20%; }
 
 .badgeActive {
   font-family: 'Poppins', sans-serif;

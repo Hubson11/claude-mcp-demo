@@ -5,6 +5,11 @@ import { mockCustomers } from '../../assets/mock/customers'
 const meta: Meta<typeof NewCustomersTable> = {
   title: 'Components/NewCustomersTable',
   component: NewCustomersTable,
+  parameters: {
+    layout: 'fullscreen',
+    viewport: { defaultViewport: 'responsive' },
+    controls: { exclude: ['className'] },
+  },
   tags: ['autodocs'],
 }
 export default meta
